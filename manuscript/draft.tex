@@ -1,0 +1,257 @@
+% Use only LaTeX2e, calling the article.cls class and 12-point type.
+
+\documentclass[12pt]{article}
+
+% Users of the {thebibliography} environment or BibTeX should use the
+% scicite.sty package, downloadable from *Science* at
+% http://www.sciencemag.org/authors/preparing-manuscripts-using-latex 
+% This package should properly format in-text
+% reference calls and reference-list numbers.
+
+\usepackage{scicite}
+\usepackage{times}
+\usepackage{siunitx}
+\usepackage{url}
+\urlstyle{same}
+
+% allows inserting figures.
+\usepackage[pdftex]{graphicx}
+
+% allows multirows in tables.
+\usepackage{multirow}
+\usepackage{booktabs}
+
+% allows separate/sequential bibliography for main text and supplement.
+% \usepackage{filecontents}
+% \usepackage{biblatex}
+
+
+% The preamble here sets up a lot of new/revised commands and
+% environments.  It's annoying, but please do *not* try to strip these
+% out into a separate .sty file (which could lead to the loss of some
+% information when we convert the file to other formats).  Instead, keep
+% them in the preamble of your main LaTeX source file.
+
+
+% The following parameters seem to provide a reasonable page setup.
+
+\topmargin 0.0cm
+\oddsidemargin 0.2cm
+\textwidth 16cm 
+\textheight 21cm
+\footskip 1.0cm
+
+
+%The next command sets up an environment for the abstract to your paper.
+
+\newenvironment{sciabstract}{%
+\begin{quote} \bf}
+{\end{quote}}
+
+
+
+% Include your paper's title here
+\title{Generation time branch attraction biases the sequential coalescent}
+
+% Place the author information here.  Please hand-code the contact
+% information and notecalls; do *not* use \footnote commands.  Let the
+% author contact information appear immediately below the author names
+% as shown.  We would also prefer that you don't change the type-size
+% settings shown here.
+
+\author
+{Patrick F. McKenzie,${^1}$, Sandra L. Hoffberg,${^1}, and Deren A. R. Eaton,$^{1\ast}$\\
+% {John Smith,$^{1\ast}$ Jane Doe,$^{1}$ Joe Scientist$^{2}$\\
+\\
+\normalsize{$^{1}$Department of Ecology, Evolution, and Environmental Biology, Columbia University,}\\
+\normalsize{1200 Amsterdam Ave., New York, USA}\\
+\\
+\normalsize{$^\ast$To whom correspondence should be addressed; E-mail:  de2356@columbia.edu.}
+}
+
+% Include the date command, but leave its argument blank.
+
+\date{}
+
+
+
+%%%%%%%%%%%%%%%%% END OF PREAMBLE %%%%%%%%%%%%%%%%
+
+
+
+\begin{document} 
+
+% Double-space the manuscript.
+
+\baselineskip24pt
+
+% Make the title.
+
+\maketitle 
+
+
+
+% Place your abstract within the special {sciabstract} environment.
+
+\begin{sciabstract}
+  The multispecies coalescent (MSC) is a model that can predict the 
+  expected distribution of unlinked genealogies across a whole genome 
+  alignment. For most applications of the MSC edge lengths between 
+  divergence events in a species tree (demographic model topology)
+  are described in coalescent units, a compound measurement representing 
+  both time in generations (g) and the effective population size (Ne), 
+  since these two parameters have equal effects on the probability of 
+  coalescence. In the case of linked genealogies, however, these parameters
+  must be separated. Both can affect the variance of coalescent times, 
+  and the variance in similarity between two genealogies, but g has the 
+  addition effect in determining the similarity of neighboring genealogies.
+  Here we show lineages with long generation times can experience 
+  artifactual attraction in concatenation analyses. Moreover, we show that
+  gene trees inferred from concatelescence within gene regions also exhibits
+  the same effect. This biases both species tree inference and network 
+  inference based on gene trees. Our results suggest that for deeper time
+  analyses SNP-based approaches that avoid gene tree concatelescence 
+  effects are more accurate.
+
+\end{sciabstract}
+
+% In setting up this template for *Science* papers, we've used both
+% the \section* command and the \paragraph* command for topical
+% divisions.  Which you use will of course depend on the type of paper
+% you're writing.  Review Articles tend to have displayed headings, for
+% which \section* is more appropriate; Research Articles, when they have
+% formal topical divisions at all, tend to signal them with bold text
+% that runs into the paragraph, for which \paragraph* is the right
+% choice.  Either way, use the asterisk (*) modifier, as shown, to
+% suppress numbering.
+
+
+\newpage
+
+% \subsection*{Main text} 
+\noindent 
+The multispecies coalescent makes the following assumptions and uses
+the following units. Here we show that x,y,z.
+
+
+
+
+
+\subsection*{Supporting Online Material}
+Materials and Methods\\
+Figs. S1 to S8\\
+Tables S1 to S2\\
+References \textit{(33-39)}
+
+
+\subsection*{Acknowledgments}
+This work was supported by an NSF grant to D.E. (DEB-1557059), 
+and Columbia University startup funds. Thanks to B. Haller for 
+advice on improving SLiM3 code, and to feedback on earlier versions
+of this manuscript from T. Price.
+% A reproducible science document is available in Supplement XXX that 
+% combines code from SLiM3 (Eidos), Python, and R to perform all 
+% simulations, parse results, and generate figures and statistical results.
+
+
+% RUN ONCE TO PRODUCE .BBL FILES
+% \bibliographystyle{Science}
+% \bibliography{DMIs_Polished_NOabbrev}
+
+
+\clearpage
+
+
+% \begin{figure}
+%   \centering{
+%     \includegraphics[width=0.99\textwidth]{../figures/Fig-1}
+%   }
+% \end{figure}
+\noindent {\bf Figure 1.}
+  Linked versus unlinked genealogies and gene trees. Genealogies cannot be 
+  observed directly, only inferred from the information contained in sequence
+  data. Empirical gene trees often combine multiple true genealogies, 
+  especially at deep time scales when recombination has great effect.
+\clearpage
+
+
+
+
+
+
+\section*{Materials and Methods}
+
+\subsection*{General simulation framework}
+
+
+
+
+% \renewcommand\refname{Materials and Methods References}
+% \begin{thebibliography}{10}
+%   \makeatletter
+%   \addtocounter{\@listctr}{32}
+%   \makeatother
+
+% \bibitem{cattani_genetics_2009}
+% M.~V. Cattani, D.~C. Presgraves, {\it Genetics\/} {\bf 181}, 1545 (2009).
+
+% \bibitem{cutter_polymorphic_2012}
+% A.~D. Cutter, {\it Trends in Ecology \& Evolution\/} {\bf 27}, 209 (2012).
+
+% \bibitem{wang_evolution_2013}
+% R.~J. Wang, C.~Ané, B.~A. Payseur, {\it Evolution\/} {\bf 67}, 2905 (2013).
+
+% \bibitem{orr_evolution_2001}
+% H.~A. Orr, M.~Turelli, {\it Evolution\/} {\bf 55}, 1085 (2001).
+
+% \bibitem{elzhov_minpacklm_2016}
+% T.~V. Elzhov, K.~M. Mullen, A.-N. Spiess, B.~Bolker, minpack.lm: {R} interface
+%   to the {Levenberg}-{Marquardt} nonlinear least-squares algorithm found in
+%   {MINPACK}, plus support for bounds. {R} package version 1.1-8 (2016).
+
+% \bibitem{mazerolle_AICcmodavg_2019}
+% M.~J. Mazerolle, {AICcmodavg}: {Model} selection and multimodel inference based
+%   on ({Q}){AIC}(c) (2019).
+
+% \bibitem{webber_similarity_2010}
+% W.~Webber, A.~Moffat, J.~Zobel, {\it ACM Transactions on Information Systems\/}
+%   {\bf 28}, 20:1 (2010).
+
+% \end{thebibliography}
+\clearpage
+
+
+
+% FIGURE S1: CARTOON DRAWING OF SIMULATION
+% \begin{figure}
+%   \centering{
+%     \includegraphics[width=0.99\textwidth]{../figures/SFigure_Dem_VS_Orr_cartoon_2}
+%   }
+% \end{figure}
+\noindent {\bf Figure S1.}
+A demonstration of the correlation between X and Y in simulated genealogies...
+
+\clearpage
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
