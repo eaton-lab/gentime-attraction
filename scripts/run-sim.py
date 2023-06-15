@@ -136,17 +136,17 @@ def single_command_line_parser() -> Dict[str, Any]:
     parser.add_argument(
         '--parameter', type=str, default="Ne", help='Ne or gt')
     parser.add_argument(
-        '--nsites', type=float, required=True, help='length of simulated loci')
+        '--nsites', type=float, default=1e4, help='length of simulated loci')
     parser.add_argument(
-        '--nloci', type=int, required=True, help='Number of independent loci to simulate')
+        '--nloci', type=int, default=10, help='Number of independent loci to simulate')
     parser.add_argument(
-        '--rep', type=int, required=True, help='replicate id.')
+        '--rep', type=int, default=0, help='replicate id.')
     parser.add_argument(
-        '--seed', type=int, required=True, help='random seed.')
+        '--seed', type=int, default=123, help='random seed.')
     parser.add_argument(
-        '--outdir', type=Path, required=True, help='directory to write output files (e.g., scratch)')
+        '--outdir', type=Path, default=".", help='directory to write output files (e.g., scratch)')
     parser.add_argument(
-        '--njobs', type=int, default=2, help='N jobs to run concurrently')
+        '--njobs', type=int, default=1, help='N jobs to run concurrently')
     parser.add_argument(
         '--nthreads', type=int, default=4, help='N threads per job')
     return vars(parser.parse_args())
