@@ -156,13 +156,17 @@ if __name__ == "__main__":
     kwargs = single_command_line_parser()
     species_tree = setup_tree(kwargs["tree_type"], kwargs["parameter"])
 
+    outdir = Path(kwargs["outdir"])
+    outdir = (outdir / f"rep{kwargs['rep']}")
+    outdir.mkdir(exist_ok=True)
+
     sim_and_infer_one_rep(
         species_tree=species_tree,
         seed=kwargs["seed"],
         nsites=kwargs["nsites"],
         nloci=kwargs["nloci"],
         rep=kwargs["rep"],
-        outdir=kwargs["outdir"],
+        outdir=outdir,
         njobs=kwargs["njobs"],
         nthreads=kwargs["nthreads"]
     )
