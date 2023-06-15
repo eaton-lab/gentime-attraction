@@ -66,7 +66,7 @@ def single_command_line_parser():
     """..."""
     parser = argparse.ArgumentParser("...")
     parser.add_argument(
-        '--tree-type', type=str, default="bal", help='bal or imb')
+        '--tree', type=str, default="bal", help='bal or imb')
     parser.add_argument(
         '--parameter', type=str, default="Ne", help='Ne or gt')
     parser.add_argument(
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         kwargs = dict(
             rep=rep,
             seed=seeds[rep],
-            tree_type=params["tree-type"],
+            tree_type=params["tree"],
             parameter=params["parameter"],
             nsites=int(params["nsites"]),
             nloci=params["nloci"],
