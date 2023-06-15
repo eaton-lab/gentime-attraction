@@ -80,7 +80,7 @@ def sim_and_infer_one_rep(
     nloci: int,
     rep: int,
     seed: int,
-    outdir: Path,
+    tmpdir: Path,
     njobs: int,
     nthreads: int,
 ) -> None:
@@ -95,7 +95,7 @@ def sim_and_infer_one_rep(
     gtrees = list(iter_first_genealogies(model))
 
     # get distribution of inferred gene trees
-    raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=outdir)
+    raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
 
     # get astral tree inferred from genealogies
     atree_true = ipcoal.phylo.infer_astral_tree(gtrees)
@@ -157,8 +157,8 @@ if __name__ == "__main__":
     species_tree = setup_tree(kwargs["tree_type"], kwargs["parameter"])
 
     outdir = Path(kwargs["outdir"])
-    outdir = (outdir / f"rep{kwargs['rep']}")
-    outdir.mkdir(exist_ok=True)
+    tmpdir = (outdir / f"rep{kwargs['rep']}")
+    tmpdir.mkdir(exist_ok=True)
 
     sim_and_infer_one_rep(
         species_tree=species_tree,
@@ -166,7 +166,7 @@ if __name__ == "__main__":
         nsites=kwargs["nsites"],
         nloci=kwargs["nloci"],
         rep=kwargs["rep"],
-        outdir=outdir,
+        tmpdir=tmpdir,
         njobs=kwargs["njobs"],
         nthreads=kwargs["nthreads"]
     )
