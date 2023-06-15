@@ -45,6 +45,8 @@ def write_and_submit_sbatch_script(
     # expand sbatch shell script with parameters
     sbatch = SBATCH.format(**dict(
         jobname=jobname,
+        tree_type=tree_type,
+        parameter=parameter,
         nsites=nsites,
         nloci=nloci,
         rep=rep,
