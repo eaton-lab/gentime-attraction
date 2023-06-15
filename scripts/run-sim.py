@@ -81,6 +81,8 @@ def sim_and_infer_one_rep(
     rep: int,
     seed: int,
     outdir: Path,
+    njobs: int,
+    nthreads: int,
 ) -> None:
     """...
 
@@ -93,7 +95,7 @@ def sim_and_infer_one_rep(
     gtrees = list(iter_first_genealogies(model))
 
     # get distribution of inferred gene trees
-    raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=2, nthreads=4, nworkers=1, tmpdir=outdir)
+    raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=outdir)
 
     # get astral tree inferred from genealogies
     atree_true = ipcoal.phylo.infer_astral_tree(gtrees)
@@ -142,6 +144,10 @@ def single_command_line_parser() -> Dict[str, Any]:
         '--seed', type=int, required=True, help='random seed.')
     parser.add_argument(
         '--outdir', type=Path, required=True, help='directory to write output files (e.g., scratch)')
+    parser.add_argument(
+        '--njobs', type=int, default=2, help='N jobs to run concurrently')
+    parser.add_argument(
+        '--nthreads', type=int, default=4, help='N threads per job')
     return vars(parser.parse_args())
 
 
@@ -157,4 +163,6 @@ if __name__ == "__main__":
         nloci=kwargs["nloci"],
         rep=kwargs["rep"],
         outdir=kwargs["outdir"],
+        njobs=kwargs["njobs"],
+        nthreads=kwargs["nthreads"]
     )
