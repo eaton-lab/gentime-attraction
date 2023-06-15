@@ -95,13 +95,14 @@ def sim_and_infer_one_rep(
     gtrees = list(iter_first_genealogies(model))
 
     # get distribution of inferred gene trees
-    raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
+    # raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
+    raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1) for i in range(nloci)]
 
     # get astral tree inferred from genealogies
     atree_true = ipcoal.phylo.infer_astral_tree(gtrees)
 
     # get astral tree inferred from gene trees
-    atree_empirical = ipcoal.phylo.infer_astral_tree(raxtrees.gene_tree)
+    atree_empirical = ipcoal.phylo.infer_astral_tree(raxtrees)  # .gene_tree)
 
     # get distances from true species tree
     true_dist_rf = species_tree.distance.get_treedist_rfg_mci(atree_true, normalize=True)
