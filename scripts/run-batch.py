@@ -55,7 +55,8 @@ def write_and_submit_sbatch_script(
     ))
 
     # b/c the params string name has a '.' in it for decimal ctime.
-    tmpfile = Path(outdir) / jobname.with_suffix('.sh')
+    jobpath = Path(outdir) / jobname
+    tmpfile = jobpath.with_suffix('.sh')
     with open(tmpfile, 'w', encoding='utf-8') as out:
         out.write(sbatch)
 
@@ -66,7 +67,7 @@ def write_and_submit_sbatch_script(
     tmpfile.unlink()
 
     # remove err file if no errors
-    errfile = Path(jobname).with_suffix(".err")
+    errfile = jobpath.with_suffix(".err")
     if errfile.exists():
         if not errfile.stat().st_size:
             errfile.unlink()
