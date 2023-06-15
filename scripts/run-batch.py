@@ -10,8 +10,8 @@ SBATCH = """\
 #!/bin/bash
 #SBATCH --account=dsi
 #SBATCH --job-name={jobname}
-#SBATCH --output={jobname}-rep{rep}.out
-#SBATCH --error={jobname}-rep{rep}.err
+#SBATCH --output={jobname}.out
+#SBATCH --error={jobname}.err
 #SBATCH --time=11:59:00
 #SBATCH --ntasks=8
 #SBATCH --nodes=1
@@ -40,7 +40,7 @@ def write_and_submit_sbatch_script(
 ):
     """..
     """
-    jobname = f"{tree_type}-{parameter}-{int(nsites)}-{rep}"
+    jobname = f"{tree_type}-{parameter}-{int(nsites)}-rep{rep}"
 
     # expand sbatch shell script with parameters
     sbatch = SBATCH.format(**dict(
@@ -55,7 +55,7 @@ def write_and_submit_sbatch_script(
     ))
 
     # b/c the params string name has a '.' in it for decimal ctime.
-    tmpfile = Path(outdir) / (jobname + '.sh')
+    tmpfile = Path(outdir) / jobname.with_suffix('.sh')
     with open(tmpfile, 'w', encoding='utf-8') as out:
         out.write(sbatch)
 
@@ -64,6 +64,12 @@ def write_and_submit_sbatch_script(
     with Popen(cmd, stdout=PIPE, stderr=STDOUT) as proc:
         out, _ = proc.communicate()
     tmpfile.unlink()
+
+    # remove err file if no errors
+    errfile = Path(jobname).with_suffix(".err")
+    if errfile.exists():
+        if not errfile.stat().st_size:
+            errfile.unlink()
 
 
 def single_command_line_parser():
