@@ -23,7 +23,7 @@ python run-sim.py \
     --nsites {nsites} \
     --nloci {nloci} \
     --seed {rep} \
-    --outdir . \
+    --outdir {outdir} \
     --rep {rep} \
     --nthreads 6
 """
@@ -49,10 +49,11 @@ def write_and_submit_sbatch_script(
         nloci=nloci,
         rep=rep,
         seed=seed,
+        outdir=outdir,
     ))
 
     # b/c the params string name has a '.' in it for decimal ctime.
-    tmpfile = Path(".") / (jobname + '.sh')
+    tmpfile = Path(outdir) / (jobname + '.sh')
     with open(tmpfile, 'w', encoding='utf-8') as out:
         out.write(sbatch)
 
@@ -101,6 +102,7 @@ if __name__ == "__main__":
             parameter=params["parameter"],
             nsites=int(params["nsites"]),
             nloci=params["nloci"],
+            outdir=params["outdir"],
         )
         write_and_submit_sbatch_script(**kwargs)
 
