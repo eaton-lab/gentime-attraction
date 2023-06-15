@@ -28,3 +28,9 @@ We want to show:
 - inferred gene trees of concatelesced sequence w/ variable g biases towards concatenation tree AND towards generation time attraction.
 
 
+Empirical examples?
+
+- simulate data on the mammal tree using estimated mean 
+  gentimes, div times, etc. and test whether we expect
+  bias of gentime groups together. Is this similar to 
+  observed difficult clades?

@@ -133,7 +133,60 @@
 The multispecies coalescent makes the following assumptions and uses
 the following units. Here we show that x,y,z.
 
+\subsection*{The Spatial Distribution of Genealogical Variation}
 
+The multispecies coalescent (MSC) is a model for inferring a phylogenetic tree from a distribution of sampled genealogies – or in practice, a dis-
+tribution of empirical gene trees inferred from multi-locus genetic data [16, 17, 18]. By integrating over
+genealogical variation the MSC improves estimation of both the species tree topology and divergence
+times, in addition to providing estimates of other parameters of interest, such as population sizes (Fig.
+1A) [19, 20]. With the growing availability of chromosome-scale genome alignments, however, there is
+an increased interest in examining patterns of genealogical variation locally across the genome, in con-
+trast to ﬁtting a single hierarchical model. A key distinction between species tree inference under the MSC
+and local genealogical inference is in the effects of genetic linkage. The MSC explicitly assumes that ge-
+nealogies are unlinked, i.e., statistically independent, whereas genealogies distributed across a contiguous
+genomic region are not statistically independent, but instead spatially auto-correlated (Fig. 1C-D). This
+correlation (linkage disequilibrium) decays over time as recombination causes samples within different ge-
+nomic regions to trace back to different sampled ancestors [21]. While this decay function has been well
+studied in the context of single populations [22], its effect on the similarity of genealogies constrained by
+a species tree model is less well understood, especially beyond the simple case of four or ﬁve taxa [23].
+Recent algorithmic advances have now made it possible to efﬁciently simulate entire chromosomes with
+recombination to produce correlated tree sequences [24], which presents a powerful new opportunity to in-
+vestigate the relationship between species tree parameters and local genealogical patterns across genomes.
+
+\subsection*{Phylogenetic linkage}
+
+A notable result of performing coalescent simulations with recombination over deep 
+phylogenetic time scales – where divergence times range to millions of generations 
+in length – is that the size of non-recombined genealogical blocks become very small. 
+This is troubling for multi-locus analyses under the MSC which make the assumption 
+that each locus represents a single genealogical history. If a locus instead represents
+many genealogies across its length, then the inferred gene tree for that locus 
+represents a concatenation artifact.
+This effect of recombination is known to negatively impact species tree estimation
+[28], and has been critically termed "concatalescence" [29].
+In a recent study we used our new simulation framework to examine the inﬂuence of 
+species tree parameters on the distribution of linked versus unlinked genealogies 
+on large phylogenetic trees [30]. An important ﬁnding of this work is that two 
+parameters that are traditionally ignored when examining the distribution of 
+unlinked genealogies (e.g., the MSC), actually provide signiﬁcant information about the
+expected similarity of linked genealogies. This includes the divergence times 
+between taxa in units of generations (t g ), and the number of taxa in the 
+tree (ntips). The effect of t g is not typically of interest since the probability 
+of incongruence (of unlinked genealogies) over an edge of the tree can be explained entirely
+by internode lengths measured in coalescent units (t c ), which is calculated as 
+t_c = t_g /2N_e , where N_e is the diploid effective population size (Fig. 1A). 
+Because t_c is a ratio of time and population size, the absolute value of
+t_g is not relevant, only its relation to Ne. However, in the context of a 
+sequential coalescent process t_g does matter, since recombination rate (r) occurs 
+on a per-generation basis, and so the effect of t_g is distinct from Ne. 
+The former inﬂuences where recombination occurs on a tree (i.e., which samples 
+will have a different ancestor in the subsequent topology) while the latter 
+inﬂuences the effect of recombination on the topology (i.e., whether a newly sampled 
+ancestor will have a similar coalescence time to the previous one).
+
+
+
+Figure 3: Some gene trees exhibit much greater waiting times than others, suggesting a potential for genealogical gravity wells, where certain clades exist over large stretches of the genome before becoming disrupted by recombination, owing simply to neutral expectations under a species tree model.
 
 
 
