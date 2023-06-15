@@ -10,8 +10,8 @@ SBATCH = """\
 #!/bin/bash
 #SBATCH --account=dsi
 #SBATCH --job-name={jobname}
-#SBATCH --output=gentime-{tree_type}-{parameter}-{nsites}-rep{rep}.out
-#SBATCH --error=gentime-{tree_type}-{parameter}-{nsites}-rep{rep}.err
+#SBATCH --output={jobname}-rep{rep}.out
+#SBATCH --error={jobname}-rep{rep}.err
 #SBATCH --time=11:59:00
 #SBATCH --ntasks=8
 #SBATCH --nodes=1
@@ -63,7 +63,6 @@ def write_and_submit_sbatch_script(
     cmd = ['sbatch', str(tmpfile)]
     with Popen(cmd, stdout=PIPE, stderr=STDOUT) as proc:
         out, _ = proc.communicate()
-
     tmpfile.unlink()
 
 
