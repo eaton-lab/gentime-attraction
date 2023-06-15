@@ -90,6 +90,7 @@ def sim_and_infer_one_rep(
     # set up model and simulate loci
     model = ipcoal.Model(species_tree, seed_mutations=seed, seed_trees=seed)
     model.sim_loci(nloci=nloci, nsites=nsites)
+    print("simulated")
 
     # get distribution of true genealogies
     gtrees = list(iter_first_genealogies(model))
@@ -98,6 +99,7 @@ def sim_and_infer_one_rep(
     # raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
     raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1) for i in range(nloci)]
     # raxtrees = raxtrees.gene_tree
+    print("rax done")
 
     # get astral tree inferred from genealogies
     atree_true = ipcoal.phylo.infer_astral_tree(gtrees)
