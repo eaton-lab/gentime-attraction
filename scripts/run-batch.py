@@ -64,6 +64,8 @@ def write_and_submit_sbatch_script(
     with Popen(cmd, stdout=PIPE, stderr=STDOUT) as proc:
         out, _ = proc.communicate()
 
+    tmpfile.unlink()
+
 
 def single_command_line_parser():
     """..."""
