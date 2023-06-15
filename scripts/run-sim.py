@@ -97,6 +97,7 @@ def sim_and_infer_one_rep(
     # get distribution of inferred gene trees
     # raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
     raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1) for i in range(nloci)]
+    # raxtrees = raxtrees.gene_tree
 
     # get astral tree inferred from genealogies
     atree_true = ipcoal.phylo.infer_astral_tree(gtrees)
@@ -116,7 +117,7 @@ def sim_and_infer_one_rep(
     ntopos_true = get_n_topos(model)
 
     # get number of topologies in empirical gene trees
-    ntopos_inferred = len(toytree.mtree(raxtrees.gene_tree).get_unique_topologies())
+    ntopos_inferred = len(toytree.mtree(raxtrees).get_unique_topologies())
 
     # store data
     print(
