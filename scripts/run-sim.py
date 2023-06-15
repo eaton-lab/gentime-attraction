@@ -157,7 +157,7 @@ if __name__ == "__main__":
     species_tree = setup_tree(kwargs["tree_type"], kwargs["parameter"])
 
     outdir = Path(kwargs["outdir"])
-    tmpdir = (outdir / f"rep{kwargs['rep']}")
+    tmpdir = (outdir / f"tmp{kwargs['rep']}")
     tmpdir.mkdir(exist_ok=True)
 
     sim_and_infer_one_rep(
