@@ -97,7 +97,7 @@ def sim_and_infer_one_rep(
 
     # get distribution of inferred gene trees
     # raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
-    raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1) for i in range(nloci)]
+    raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1, tmpdir=tmpdir) for i in range(nloci)]
     # raxtrees = raxtrees.gene_tree
     print("rax done")
 
