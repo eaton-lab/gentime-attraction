@@ -100,10 +100,10 @@ def sim_and_infer_one_rep(
     # raxtrees = raxtrees.gene_tree
 
     # get astral tree inferred from genealogies
-    atree_true = ipcoal.phylo.infer_astral_tree(gtrees)
+    atree_true = ipcoal.phylo.infer_astral_tree(gtrees, tmpdir=tmpdir)
 
     # get astral tree inferred from gene trees
-    atree_empirical = ipcoal.phylo.infer_astral_tree(raxtrees)  # .gene_tree)
+    atree_empirical = ipcoal.phylo.infer_astral_tree(raxtrees, tmpdir=tmpdir)  # .gene_tree)
 
     # get distances from true species tree
     true_dist_rf = species_tree.distance.get_treedist_rfg_mci(atree_true, normalize=True)
@@ -172,3 +172,5 @@ if __name__ == "__main__":
         njobs=kwargs["njobs"],
         nthreads=kwargs["nthreads"]
     )
+
+    tmpdir.rmdir()
