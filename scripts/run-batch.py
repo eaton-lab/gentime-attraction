@@ -18,7 +18,7 @@ SBATCH = """\
 #SBATCH --mem-per-cpu=8G
 
 python run-sim.py \
-    --tree-type {tree_type} \
+    --tree {tree} \
     --parameter {parameter} \
     --nsites {nsites} \
     --nloci {nloci} \
@@ -32,7 +32,7 @@ python run-sim.py \
 def write_and_submit_sbatch_script(
     rep,
     seed,
-    tree_type,
+    tree,
     parameter,
     nsites,
     nloci,
@@ -40,12 +40,12 @@ def write_and_submit_sbatch_script(
 ):
     """..
     """
-    jobname = f"{tree_type}-{parameter}-{int(nsites)}-rep{rep}"
+    jobname = f"{tree}-{parameter}-{int(nsites)}-rep{rep}"
 
     # expand sbatch shell script with parameters
     sbatch = SBATCH.format(**dict(
         jobname=jobname,
-        tree_type=tree_type,
+        tree=tree,
         parameter=parameter,
         nsites=nsites,
         nloci=nloci,
@@ -108,6 +108,7 @@ if __name__ == "__main__":
         # check if rep outfile exists
         jobname = Path(f"{params['tree']}-{params['parameter']}-{int(params['nsites'])}-rep{rep}")
         if jobname.with_suffix(".out").exists():
+            print(f"skipping {jobname}; already done.")
             continue
 
         kwargs = dict(
