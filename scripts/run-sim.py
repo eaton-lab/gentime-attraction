@@ -156,7 +156,7 @@ def single_command_line_parser() -> Dict[str, Any]:
 if __name__ == "__main__":
 
     kwargs = single_command_line_parser()
-    species_tree = setup_tree(kwargs["tree_type"], kwargs["parameter"])
+    species_tree = setup_tree(kwargs["tree-type"], kwargs["parameter"])
 
     outdir = Path(kwargs["outdir"])
     tmpdir = (outdir / f"tmp-{kwargs['parameter']}-{kwargs['nsites']}-{kwargs['rep']}")
