@@ -106,7 +106,7 @@ if __name__ == "__main__":
     for rep in range(params["nreps"]):
 
         # check if rep outfile exists
-        jobname = f"{params['tree_type']}-{params['parameter']}-{int(params['nsites'])}-rep{rep}"
+        jobname = f"{params['tree']}-{params['parameter']}-{int(params['nsites'])}-rep{rep}"
         if jobname.with_suffix(".out").exists():
             continue
 

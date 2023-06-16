@@ -133,7 +133,7 @@ def single_command_line_parser() -> Dict[str, Any]:
     parser = argparse.ArgumentParser(
         description='Coalescent simulation and tree inference w/ recombination')
     parser.add_argument(
-        '--tree-type', type=str, default="bal", help='bal or imb')
+        '--tree', type=str, default="bal", help='bal or imb')
     parser.add_argument(
         '--parameter', type=str, default="Ne", help='Ne or gt')
     parser.add_argument(
@@ -156,7 +156,7 @@ def single_command_line_parser() -> Dict[str, Any]:
 if __name__ == "__main__":
 
     kwargs = single_command_line_parser()
-    species_tree = setup_tree(kwargs["tree-type"], kwargs["parameter"])
+    species_tree = setup_tree(kwargs["tree"], kwargs["parameter"])
 
     outdir = Path(kwargs["outdir"])
     tmpdir = (outdir / f"tmp-{kwargs['parameter']}-{kwargs['nsites']}-{kwargs['rep']}")
