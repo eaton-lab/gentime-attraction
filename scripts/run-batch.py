@@ -114,7 +114,7 @@ if __name__ == "__main__":
         kwargs = dict(
             rep=rep,
             seed=seeds[rep],
-            tree_type=params["tree"],
+            tree=params["tree"],
             parameter=params["parameter"],
             nsites=int(params["nsites"]),
             nloci=params["nloci"],
