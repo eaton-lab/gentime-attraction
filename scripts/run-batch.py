@@ -105,6 +105,11 @@ if __name__ == "__main__":
     seeds = rng.integers(1e12, size=params["nreps"])
     for rep in range(params["nreps"]):
 
+        # check if rep outfile exists
+        jobname = f"{params['tree_type']}-{params['parameter']}-{int(params['nsites'])}-rep{rep}"
+        if jobname.with_suffix(".out").exists():
+            continue
+
         kwargs = dict(
             rep=rep,
             seed=seeds[rep],
