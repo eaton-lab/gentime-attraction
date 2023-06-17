@@ -102,6 +102,22 @@ def sim_and_infer_one_rep(
     raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1, tmpdir=tmpdir) for i in range(nloci)]
     # raxtrees = raxtrees.gene_tree
 
+    # single tree is the result
+    if nloci == 1:
+        print(
+            nloci, nsites, rep,
+            model.df.nsnps.mean(),
+            get_n_topos(model),
+            1,
+            "",
+            0,
+            0,
+            raxtrees.write(),
+            raxtrees.distance.get_treedist_rfg_mci(species_tree),
+            raxtrees.distance.get_treedist_rfg_quartets(species_tree).similarity_to_reference,
+        )
+        return
+
     # get astral tree inferred from genealogies
     atree_true = ipcoal.phylo.infer_astral_tree(gtrees, tmpdir=tmpdir)
 
