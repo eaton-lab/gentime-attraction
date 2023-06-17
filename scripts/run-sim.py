@@ -104,6 +104,7 @@ def sim_and_infer_one_rep(
 
     # single tree is the result
     if nloci == 1:
+        raxtree = raxtrees[0]
         print(
             nloci, nsites, rep,
             model.df.nsnps.mean(),
@@ -112,9 +113,9 @@ def sim_and_infer_one_rep(
             "",
             0,
             0,
-            raxtrees.write(),
-            raxtrees.distance.get_treedist_rfg_mci(species_tree),
-            raxtrees.distance.get_treedist_rfg_quartets(species_tree).similarity_to_reference,
+            raxtree.write(),
+            raxtree.distance.get_treedist_rfg_mci(species_tree),
+            raxtree.distance.get_treedist_rfg_quartets(species_tree).similarity_to_reference,
         )
         return
 
