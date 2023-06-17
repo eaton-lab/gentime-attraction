@@ -13,7 +13,7 @@ SBATCH = """\
 #SBATCH --output={jobname}.out
 #SBATCH --error={jobname}.err
 #SBATCH --time=11:59:00
-#SBATCH --ntasks=8
+#SBATCH --ntasks=16
 #SBATCH --nodes=1
 #SBATCH --mem-per-cpu=8G
 
