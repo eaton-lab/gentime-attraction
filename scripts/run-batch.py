@@ -41,10 +41,11 @@ def write_and_submit_sbatch_script(
     """..
     """
     jobname = f"{tree}-{parameter}-{int(nsites)}-rep{rep}"
+    jobpath = Path(outdir) / jobname
 
     # expand sbatch shell script with parameters
     sbatch = SBATCH.format(**dict(
-        jobname=jobname,
+        jobname=jobpath,
         tree=tree,
         parameter=parameter,
         nsites=nsites,
@@ -55,7 +56,7 @@ def write_and_submit_sbatch_script(
     ))
 
     # b/c the params string name has a '.' in it for decimal ctime.
-    jobpath = Path(outdir) / jobname
+
     tmpfile = jobpath.with_suffix('.sh')
     with open(tmpfile, 'w', encoding='utf-8') as out:
         out.write(sbatch)
