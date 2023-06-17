@@ -17,7 +17,8 @@ import pandas as pd
 
 
 # get an ultrametric imbalanced tree
-EDGES = [0, 1, 8, 10, 6, 7, 12, 13, 14]
+BAL_EDGES = [0, 1, 8, 10, 6, 7, 12, 13, 14]
+IMB_EDGES = [3, 4, 5, 10, 11]
 NE_DEFAULT = 1e5
 GT_DEFAULT = 1
 RNG = np.random.default_rng(123)
@@ -39,15 +40,17 @@ def setup_tree(
     # set parameters on the species tree
     if tree_type == "bal":
         tree = toytree.rtree.baltree(8, treeheight=1.5e5)
+        edges = BAL_EDGES
     else:
-        tree = toytree.rtree.imbtree(8, treeheight=1.5e5)
+        tree = toytree.rtree.imbtree(8, treeheight=1.5)
+        edges = IMB_EDGES
 
     if parameter == "Ne":
-        tree = tree.set_node_data("Ne", {i: NE_DEFAULT * 10 for i in EDGES}, default=NE_DEFAULT)
+        tree = tree.set_node_data("Ne", {i: NE_DEFAULT * 10 for i in edges}, default=NE_DEFAULT)
         tree = tree.set_node_data("gt", default=GT_DEFAULT)
     else:
         tree = tree.set_node_data("Ne", default=NE_DEFAULT)
-        tree = tree.set_node_data("gt", {i: GT_DEFAULT * 10 for i in EDGES}, default=GT_DEFAULT)
+        tree = tree.set_node_data("gt", {i: GT_DEFAULT * 10 for i in edges}, default=GT_DEFAULT)
 
     tree = tree.set_node_data("tg", {i: i.dist / i.gt for i in tree})
     tree = tree.set_node_data("tc", {i: i.tg / (2 * i.Ne) for i in tree})
