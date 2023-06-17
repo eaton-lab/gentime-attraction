@@ -115,7 +115,7 @@ def sim_and_infer_one_rep(
             0,
             raxtree.write(),
             raxtree.distance.get_treedist_rfg_mci(species_tree),
-            raxtree.distance.get_treedist_rfg_quartets(species_tree).similarity_to_reference,
+            raxtree.distance.get_treedist_quartets(species_tree).similarity_to_reference,
         )
         return
 
