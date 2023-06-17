@@ -18,7 +18,7 @@ import pandas as pd
 
 # get an ultrametric imbalanced tree
 BAL_EDGES = [0, 1, 8, 10, 6, 7, 12, 13, 14]
-IMB_EDGES = [3, 4, 5, 10, 11]
+IMB_EDGES = [3, 4, 10, 11]
 NE_DEFAULT = 1e5
 GT_DEFAULT = 1
 RNG = np.random.default_rng(123)
