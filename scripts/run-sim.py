@@ -39,10 +39,10 @@ def setup_tree(
 
     # set parameters on the species tree
     if tree_type == "bal":
-        tree = toytree.rtree.baltree(8, treeheight=1.5e5)
+        tree = toytree.rtree.baltree(8, treeheight=2e5)
         edges = BAL_EDGES
     else:
-        tree = toytree.rtree.imbtree(8, treeheight=1.5)
+        tree = toytree.rtree.imbtree(8, treeheight=2e5)
         edges = IMB_EDGES
 
     if parameter == "Ne":
