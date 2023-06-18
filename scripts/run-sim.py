@@ -19,7 +19,7 @@ import pandas as pd
 # get an ultrametric imbalanced tree
 BAL_EDGES = [0, 1, 8, 10, 6, 7, 12, 13, 14]
 IMB_EDGES = [3, 4, 10, 11]
-NE_DEFAULT = 1e5
+NE_DEFAULT = 2e5
 GT_DEFAULT = 1
 RNG = np.random.default_rng(123)
 NLOCI = 1000
@@ -39,10 +39,10 @@ def setup_tree(
 
     # set parameters on the species tree
     if tree_type == "bal":
-        tree = toytree.rtree.baltree(8, treeheight=2e5)
+        tree = toytree.rtree.baltree(8, treeheight=6e5)
         edges = BAL_EDGES
     else:
-        tree = toytree.rtree.imbtree(8, treeheight=2e5)
+        tree = toytree.rtree.imbtree(8, treeheight=6e5)
         edges = IMB_EDGES
 
     if parameter == "Ne":
@@ -139,10 +139,13 @@ def sim_and_infer_one_rep(
     # get number of topologies in empirical gene trees
     ntopos_inferred = len(toytree.mtree(raxtrees).get_unique_topologies())
 
+    # infer a SNAQ net1...
+
+
     # store data
     print(
         nloci, nsites, rep,
-        model.df.groupby("locus").nsnps.mean().mean(), ntopos_true, ntopos_inferred,
+        model.df.groupby("locus").nsnps.sum().mean(), ntopos_true, ntopos_inferred,
         atree_true.write(), true_dist_rf, true_dist_qrt,
         atree_empirical.write(), emp_dist_rf, emp_dist_qrt,
     )
