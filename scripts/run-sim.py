@@ -7,6 +7,7 @@ This script is meant to be called within a SLURM submission script.
 
 from typing import Dict, Any
 from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor
 import argparse
 import sys
 import toytree
@@ -46,11 +47,11 @@ def setup_tree(
         edges = IMB_EDGES
 
     if parameter == "Ne":
-        tree = tree.set_node_data("Ne", {i: NE_DEFAULT * 10 for i in edges}, default=NE_DEFAULT)
+        tree = tree.set_node_data("Ne", {i: NE_DEFAULT * 20 for i in edges}, default=NE_DEFAULT)
         tree = tree.set_node_data("gt", default=GT_DEFAULT)
     else:
         tree = tree.set_node_data("Ne", default=NE_DEFAULT)
-        tree = tree.set_node_data("gt", {i: GT_DEFAULT * 10 for i in edges}, default=GT_DEFAULT)
+        tree = tree.set_node_data("gt", {i: GT_DEFAULT * 20 for i in edges}, default=GT_DEFAULT)
 
     tree = tree.set_node_data("tg", {i: i.dist / i.gt for i in tree})
     tree = tree.set_node_data("tc", {i: i.tg / (2 * i.Ne) for i in tree})
@@ -64,23 +65,55 @@ def setup_tree(
     return tree
 
 
-def get_n_topos(model: ipcoal.Model) -> float:
+def get_n_topos(model_df: pd.DataFrame) -> float:
     ntopos = []
-    for _, locus in model.df.groupby("locus"):
+    for _, locus in model_df.groupby("locus"):
         mtree = toytree.mtree(locus.genealogy)
         ntopos.append(len(mtree.get_unique_topologies()))
     return np.mean(ntopos)
 
 
-def iter_first_genealogies(model: ipcoal.Model):
-    for _, df in model.df.groupby("locus"):
+def iter_first_genealogies(model_df: pd.DataFrame):
+    for _, df in model_df.groupby("locus"):
         yield toytree.tree(df.iloc[0, 6])
+
+
+def one_batch_sim(tree, nloci, nsites, nthreads, seed):
+    """Return a list of ToyTrees as inferred raxml-ng gene trees."""
+    model = ipcoal.Model(tree=tree, seed_trees=seed, seed_mutations=seed)
+    model.sim_loci(nloci, nsites)
+    raxdf = ipcoal.phylo.infer_raxml_ng_trees(model, nthreads=nthreads, nproc=1, nworkers=1, do_not_autoscale_threads=True)
+    return model.df, raxdf
+
+
+def batch_sims(tree: toytree.ToyTree, nloci: int = 1000, nsites: int = 1e4, njobs: int = 10, nthreads: int = 4):    
+
+    if nloci == 1:
+        return one_batch_sim(tree, nloci, nsites, nthreads, None)
+
+    # not perfect
+    nloci_per = int(nloci / njobs)
+    rasyncs = {}
+    with ProcessPoolExecutor(max_workers=njobs) as pool:
+        for i in range(njobs):
+            rasyncs[i] = pool.submit(one_batch_sim, *(tree, nloci_per, nsites, nthreads, None))
+    gdata = []
+    rdata = []
+    for i in range(njobs):
+        gdf, rdf = rasyncs[i].result()
+        gdf.locus += i * nloci_per
+        rdf.locus += i * nloci_per
+        gdata.append(gdf)
+        rdata.append(rdf)
+    gdata = pd.concat(gdata, ignore_index=True)
+    rdata = pd.concat(rdata, ignore_index=True)
+    return gdata, rdata
 
 
 def sim_and_infer_one_rep(
     species_tree: toytree.ToyTree,
-    nsites: int,
     nloci: int,
+    nsites: int,
     rep: int,
     seed: int,
     tmpdir: Path,
@@ -91,24 +124,29 @@ def sim_and_infer_one_rep(
 
     """
     # set up model and simulate loci
-    model = ipcoal.Model(species_tree, seed_mutations=seed, seed_trees=seed)
-    model.sim_loci(nloci=nloci, nsites=nsites)
+    # model = ipcoal.Model(species_tree, seed_mutations=seed, seed_trees=seed)
+
+    # batch simulate loci
+    # model.sim_loci(nloci=nloci, nsites=nsites)
+    simdf, raxdf = batch_sims(species_tree, nloci, nsites, njobs, nthreads)
 
     # get distribution of true genealogies
-    gtrees = list(iter_first_genealogies(model))
+    gtrees = list(iter_first_genealogies(simdf))
 
     # get distribution of inferred gene trees
-    # raxtrees = ipcoal.phylo.infer_raxml_ng_trees(model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
-    raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1, tmpdir=tmpdir) for i in range(nloci)]
+    raxtrees = raxdf.gene_tree
+    # raxtrees = ipcoal.phylo.infer_raxml_ng_trees(
+    #     model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
     # raxtrees = raxtrees.gene_tree
+    # raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1, tmpdir=tmpdir) for i in range(nloci)]
 
     # single tree is the result
     if nloci == 1:
-        raxtree = raxtrees[0]
+        raxtree = toytree.tree(raxtrees[0])
         print(
             nloci, nsites, rep,
-            model.df.nsnps.mean(),
-            get_n_topos(model),
+            raxdf.nsnps.mean(),
+            get_n_topos(simdf),
             1,
             "",
             0,
@@ -134,7 +172,7 @@ def sim_and_infer_one_rep(
     emp_dist_qrt = species_tree.distance.get_treedist_quartets(atree_empirical).similarity_to_reference
 
     # get mean topologies per locus in true genealogies
-    ntopos_true = get_n_topos(model)
+    ntopos_true = get_n_topos(simdf)
 
     # get number of topologies in empirical gene trees
     ntopos_inferred = len(toytree.mtree(raxtrees).get_unique_topologies())
@@ -145,7 +183,7 @@ def sim_and_infer_one_rep(
     # store data
     print(
         nloci, nsites, rep,
-        model.df.groupby("locus").nsnps.sum().mean(), ntopos_true, ntopos_inferred,
+        raxdf.nsnps.mean(), ntopos_true, ntopos_inferred,
         atree_true.write(), true_dist_rf, true_dist_qrt,
         atree_empirical.write(), emp_dist_rf, emp_dist_qrt,
     )
@@ -176,7 +214,29 @@ def single_command_line_parser() -> Dict[str, Any]:
     return vars(parser.parse_args())
 
 
+def test_sim():
+    tree = toytree.rtree.imbtree(8, treeheight=2e6)
+    tree.set_node_data("Ne", default=1e5, inplace=True)
+    return batch_sims(tree, nloci=100, nsites=1000, njobs=5, nthreads=2)
+
+
+def test_sim_and_infer():
+    gdf, rdf = test_sim()
+    atree_true = ipcoal.phylo.infer_astral_tree(gdf.genealogy)
+    atree_emp = ipcoal.phylo.infer_astral_tree(rdf.gene_tree)
+    return atree_true, atree_emp
+
+
+def test():
+    tree = toytree.rtree.imbtree(8, treeheight=2e6)
+    tree.set_node_data("Ne", default=1e5, inplace=True)
+    sim_and_infer_one_rep(tree, nloci=10, nsites=1e4, rep=0, seed=123, tmpdir=Path("/tmp"), njobs=4, nthreads=2)
+
+
 if __name__ == "__main__":
+
+    # print(test_sim_and_infer())
+    # test()
 
     kwargs = single_command_line_parser()
     species_tree = setup_tree(kwargs["tree"], kwargs["parameter"])
