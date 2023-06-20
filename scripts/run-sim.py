@@ -178,7 +178,16 @@ def sim_and_infer_one_rep(
     ntopos_inferred = len(toytree.mtree(raxtrees).get_unique_topologies())
 
     # infer a SNAQ net1...
+    # julia_path = "/home/deren/local/julia/bin/julia"
+    ipcoal.phylo.infer_snaq_network(
+        gtrees, tmpdir=tmpdir, name="sim", starting_tree=species_tree)#, binary_path=julia_path)
+    gnet, gadmix = toytree.network.parse_network_to_tree_and_admix(
+        tmpdir / "analysis-snaq/sim.snaq.net-1.networks")
 
+    ipcoal.phylo.infer_snaq_network(
+        raxtrees, tmpdir=tmpdir, name="rax", starting_tree=species_tree)#, binary_path=julia_path)
+    rnet, radmix = toytree.network.parse_network_to_tree_and_admix(
+        tmpdir / "analysis-snaq/rax.snaq.net-1.networks")
 
     # store data
     print(
@@ -186,6 +195,8 @@ def sim_and_infer_one_rep(
         raxdf.nsnps.mean(), ntopos_true, ntopos_inferred,
         atree_true.write(), true_dist_rf, true_dist_qrt,
         atree_empirical.write(), emp_dist_rf, emp_dist_qrt,
+        gnet, gadmix,
+        rnet, radmix,
     )
 
 
