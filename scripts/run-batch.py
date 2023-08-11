@@ -52,8 +52,8 @@ def write_and_submit_sbatch_script(
         jobname=jobname,
         tree=tree,
         parameter=parameter,
-        nsites=nsites,
-        nloci=nloci,
+        nsites=int(nsites),
+        nloci=int(nloci),
         rep=rep,
         seed=seed,
         outdir=outdir,
@@ -90,7 +90,7 @@ def single_command_line_parser():
     parser.add_argument(
         '--nsites', type=float, default=1e4, help='length of simulated loci')
     parser.add_argument(
-        '--nloci', type=int, default=10, help='Number of independent loci to simulate')
+        '--nloci', type=float, default=10, help='Number of independent loci to simulate')
     parser.add_argument(
         '--nreps', type=int, default=100, help="Number of reps")
     parser.add_argument(
