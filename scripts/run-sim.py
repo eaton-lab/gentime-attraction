@@ -177,6 +177,7 @@ def sim_and_infer_one_rep(
     tmpdir: Path,
     njobs: int,
     nthreads: int,
+    julia_path: Path,
 ) -> None:
     """...
 
@@ -227,7 +228,6 @@ def sim_and_infer_one_rep(
     emp_dist_rf = species_tree.distance.get_treedist_rf(atree_empirical)
 
     # infer a SNAQ net1 from the TRUE input genealogies
-    julia_path = "/home/deren/local/src/julia-1.6.2/bin/julia"
     ipcoal.phylo.infer_snaq_network(
         gtrees,
         tmpdir=tmpdir,
@@ -317,6 +317,9 @@ def single_command_line_parser() -> Dict[str, Any]:
         '--njobs', type=int, default=1, help='N jobs to run concurrently')
     parser.add_argument(
         '--nthreads', type=int, default=4, help='N threads per job')
+    parser.add_argument(
+        '--julia', type=str, default="julia", help='Path to julia')
+
     return vars(parser.parse_args())
 
 
@@ -370,6 +373,10 @@ if __name__ == "__main__":
     species_tree = setup_tree(kwargs["tree"], kwargs["parameter"])
     tmpdir = setup_output_dir(**kwargs)
 
+    # kwargs['julia'] = "/home/deren/local/src/julia-1.6.2/bin/julia"
+    julia_path = Path(kwargs["julia"])
+    assert julia_path.exists()
+
     sim_and_infer_one_rep(
         species_tree=species_tree,
         seed=kwargs["seed"],
@@ -378,6 +385,7 @@ if __name__ == "__main__":
         rep=kwargs["rep"],
         tmpdir=tmpdir,
         njobs=kwargs["njobs"],
-        nthreads=kwargs["nthreads"]
+        nthreads=kwargs["nthreads"],
+        julia_path=kwargs["julia"],
     )
     tmpdir.rmdir()
