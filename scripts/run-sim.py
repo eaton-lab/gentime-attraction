@@ -288,6 +288,8 @@ def sim_and_infer_one_rep(
         rloglik,
     ]
     print("\t".join([str(i) for i in data]))
+    for tmpfile in tmpdir.glob("*"):
+        tmpfile.unlink()
 
 
 def single_command_line_parser() -> Dict[str, Any]:

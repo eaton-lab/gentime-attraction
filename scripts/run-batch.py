@@ -62,7 +62,6 @@ def write_and_submit_sbatch_script(
     ))
 
     # b/c the params string name has a '.' in it for decimal ctime.
-
     tmpfile = jobpath.with_suffix('.sh')
     with open(tmpfile, 'w', encoding='utf-8') as out:
         out.write(sbatch)
