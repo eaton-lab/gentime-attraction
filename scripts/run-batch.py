@@ -6,6 +6,7 @@ from subprocess import Popen, PIPE, STDOUT
 import numpy as np
 
 
+# OPTIMIZED FOR BURG CLUSTER WITH 16 Cores / Node
 SBATCH = """\
 #!/bin/bash
 #SBATCH --account=dsi
@@ -25,6 +26,7 @@ python run-sim.py \
     --seed {rep} \
     --outdir {outdir} \
     --rep {rep} \
+    --njobs 1 \
     --nthreads 6
 """
 
