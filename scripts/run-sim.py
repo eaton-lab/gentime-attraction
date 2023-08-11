@@ -244,7 +244,7 @@ def sim_and_infer_one_rep(
         gnet, other = netio.readline().strip().split(";")
         gloglik = other.split()[-1]
     snaqdir = tmpdir / "analysis-snaq"
-    for tmpfile in snaqdir.glob("sim-*"):
+    for tmpfile in snaqdir.glob("*"):
         tmpfile.unlink()
     snaqdir.rmdir()
 
@@ -263,7 +263,7 @@ def sim_and_infer_one_rep(
         rnet, other = netio.readline().strip().split(";")
         rloglik = other.split()[-1]
     snaqdir = tmpdir / "analysis-snaq"
-    for tmpfile in snaqdir.glob("rax-*"):
+    for tmpfile in snaqdir.glob("*"):
         tmpfile.unlink()
     snaqdir.rmdir()
 
