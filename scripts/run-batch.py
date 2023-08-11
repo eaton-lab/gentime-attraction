@@ -26,8 +26,8 @@ python run-sim.py \
     --seed {rep} \
     --outdir {outdir} \
     --rep {rep} \
-    --njobs 5 \
-    --nthreads 2
+    --njobs {njobs} \
+    --nthreads {nthreads}
 """
 
 
@@ -39,6 +39,8 @@ def write_and_submit_sbatch_script(
     nsites: int,
     nloci: int,
     outdir: Path,
+    njobs: int,
+    nthreads: int,
 ):
     """..
     """
@@ -55,6 +57,8 @@ def write_and_submit_sbatch_script(
         rep=rep,
         seed=seed,
         outdir=outdir,
+        njobs=njobs,
+        nthreads=nthreads,
     ))
 
     # b/c the params string name has a '.' in it for decimal ctime.
@@ -96,7 +100,7 @@ def single_command_line_parser():
     parser.add_argument(
         '--nthreads', type=int, default=4, help='N threads per job')
     parser.add_argument(
-        '--seed', type=int, default=123, help="RNG seed")
+        '--seed', type=int, default=123, help="RNG seed. Used default as starting seed in manuscript.")
 
     return vars(parser.parse_args())
 
@@ -122,5 +126,7 @@ if __name__ == "__main__":
             nsites=int(params["nsites"]),
             nloci=params["nloci"],
             outdir=params["outdir"],
+            njobs=params["njobs"],
+            nthreads=params["nthreads"],
         )
         write_and_submit_sbatch_script(**kwargs)
