@@ -6,7 +6,7 @@ from subprocess import Popen, PIPE, STDOUT
 import numpy as np
 
 
-# OPTIMIZED FOR BURG CLUSTER WITH 16 Cores / Node
+# OPTIMIZED FOR HPC THAT ALLOWS FAST JOBS WITH <= 12 CORES
 SBATCH = """\
 #!/bin/bash
 #SBATCH --account=dsi
@@ -26,19 +26,19 @@ python run-sim.py \
     --seed {rep} \
     --outdir {outdir} \
     --rep {rep} \
-    --njobs 1 \
-    --nthreads 6
+    --njobs 5 \
+    --nthreads 2
 """
 
 
 def write_and_submit_sbatch_script(
-    rep,
-    seed,
-    tree,
-    parameter,
-    nsites,
-    nloci,
-    outdir,
+    rep: int,
+    seed: int,
+    tree: str,
+    parameter: str,
+    nsites: int,
+    nloci: int,
+    outdir: Path,
 ):
     """..
     """
@@ -124,4 +124,3 @@ if __name__ == "__main__":
             outdir=params["outdir"],
         )
         write_and_submit_sbatch_script(**kwargs)
-
