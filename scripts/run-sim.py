@@ -386,7 +386,7 @@ if __name__ == "__main__":
 
     kwargs = single_command_line_parser()
     species_tree = setup_tree(kwargs["tree"], kwargs["parameter"])
-    tmpdir = setup_output_dir(kwargs)
+    tmpdir = setup_output_dir(**kwargs)
 
     sim_and_infer_one_rep(
         species_tree=species_tree,
@@ -398,4 +398,4 @@ if __name__ == "__main__":
         njobs=kwargs["njobs"],
         nthreads=kwargs["nthreads"]
     )
-    # tmpdir.rmdir()
+    tmpdir.rmdir()
