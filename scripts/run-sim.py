@@ -8,7 +8,9 @@ This script is meant to be called within a SLURM submission script.
 from typing import Dict, Any, Tuple, Iterator, Optional
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor
+import os
 import argparse
+import subprocess
 import toytree
 import ipcoal
 import numpy as np
@@ -295,7 +297,8 @@ def single_command_line_parser() -> Dict[str, Any]:
         --tree bal --parameter gt \
         --nsites 1e3 --nloci 1e3 \
         --rep 0 --seed 0 \
-        --njobs 6 --nthreads 2
+        --njobs 6 --nthreads 2 \
+        --julia /home/deren/local/src/julia-1.6.2/bin/julia
     """
     parser = argparse.ArgumentParser(
         description='Coalescent simulation and tree inference w/ recombination')
@@ -318,7 +321,7 @@ def single_command_line_parser() -> Dict[str, Any]:
     parser.add_argument(
         '--nthreads', type=int, default=4, help='N threads per job')
     parser.add_argument(
-        '--julia', type=str, default="julia", help='Path to julia')
+        '--julia', type=Path, default=None, help='Path to julia')
 
     return vars(parser.parse_args())
 
@@ -373,9 +376,11 @@ if __name__ == "__main__":
     species_tree = setup_tree(kwargs["tree"], kwargs["parameter"])
     tmpdir = setup_output_dir(**kwargs)
 
-    # kwargs['julia'] = "/home/deren/local/src/julia-1.6.2/bin/julia"
-    julia_path = Path(kwargs["julia"])
-    assert julia_path.exists()
+    julia_path = kwargs["julia"]
+    if julia_path is None:
+        proc = subprocess.run(['which', 'julia'], capture_output=True, check=True)
+        julia_path = Path(proc.stdout.decode().strip())
+    assert julia_path.exists(), f"Julia binary not found: {julia_path}"
 
     sim_and_infer_one_rep(
         species_tree=species_tree,
@@ -386,6 +391,6 @@ if __name__ == "__main__":
         tmpdir=tmpdir,
         njobs=kwargs["njobs"],
         nthreads=kwargs["nthreads"],
-        julia_path=kwargs["julia"],
+        julia_path=julia_path,
     )
     tmpdir.rmdir()
