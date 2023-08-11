@@ -92,7 +92,7 @@ def one_batch_sim(
     nthreads: int,
     seed: Optional[int],
     infer: bool,
-) -> Tuple[ipcoal.Model, pd.DataFrame]:
+) -> Tuple[pd.DataFrame, np.ndarray, pd.DataFrame]:
     """Return dataframes with true and (optionally) inferred gene trees.
 
     """
@@ -115,6 +115,7 @@ def one_batch_sim(
             nproc=1,
             nworkers=1,
             do_not_autoscale_threads=True,
+            perf_threads=True,
         )
     return model.df, model.seqs, raxdf
 
@@ -193,6 +194,7 @@ def sim_and_infer_one_rep(
         nthreads=int(njobs * nthreads),
         seed=seed,
         do_not_autoscale_threads=True,
+        perf_threads=True,
     )
 
     # get distribution of unlinked genealogies from simulation dataframe
@@ -211,26 +213,6 @@ def sim_and_infer_one_rep(
     ntopos_true = get_n_topos(simdf)
     # get number of topologies in empirical gene trees
     ntopos_inferred = len(raxtrees.get_unique_topologies())
-
-    # raxtrees = ipcoal.phylo.infer_raxml_ng_trees(
-    #     model, nproc=njobs, nthreads=nthreads, nworkers=1, tmpdir=tmpdir)
-    # raxtrees = raxtrees.gene_tree
-    # raxtrees = [ipcoal.phylo.infer_raxml_ng_tree(model, idxs=i, nthreads=nthreads, nworkers=1, tmpdir=tmpdir) for i in range(nloci)]
-
-    # # single concat tree is the result
-    # if nloci == 1:
-    #     raxtree = toytree.tree(raxtrees[0])
-    #     print(
-    #         nloci,
-    #         nsites,
-    #         rep,
-    #         raxdf.nsnps.mean(),
-    #         get_n_topos(simdf),      # n true topos across chromosome
-    #         raxtree.write(),
-    #         raxtree.distance.get_treedist_rfg_mci(species_tree),
-    #         raxtree.distance.get_treedist_quartets(species_tree).similarity_to_reference,
-    #     )
-    #     return
 
     # infer astral tree inferred from true genealogies
     atree_true = ipcoal.phylo.infer_astral_tree(gtrees, tmpdir=tmpdir)
@@ -310,10 +292,10 @@ def single_command_line_parser() -> Dict[str, Any]:
     """...
 
     python run-sim.py \
-        --tree bal --parameter Ne \
-        --nsites 1e3 --nloci 1e5 \
+        --tree bal --parameter gt \
+        --nsites 1e3 --nloci 1e3 \
         --rep 0 --seed 0 \
-        --njobs 4 --nthreads 2
+        --njobs 6 --nthreads 2
     """
     parser = argparse.ArgumentParser(
         description='Coalescent simulation and tree inference w/ recombination')
@@ -324,7 +306,7 @@ def single_command_line_parser() -> Dict[str, Any]:
     parser.add_argument(
         '--nsites', type=float, default=1e4, help='length of simulated loci')
     parser.add_argument(
-        '--nloci', type=int, default=10, help='Number of independent loci to simulate')
+        '--nloci', type=float, default=10, help='Number of independent loci to simulate')
     parser.add_argument(
         '--rep', type=int, default=0, help='replicate id.')
     parser.add_argument(
