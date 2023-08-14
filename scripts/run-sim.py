@@ -138,6 +138,7 @@ def batch_sims(
     nthreads: int = 4,
     seed: int = None,
     infer: bool = True,
+    max_sites_per_locus_in_concat: int = 5_000,
 ) -> Tuple[pd.DataFrame, np.ndarray, pd.DataFrame]:
     """Return a (genealogy, genetree) data frames.
 
@@ -152,7 +153,7 @@ def batch_sims(
     seeds = np.random.default_rng(seed)
     with ProcessPoolExecutor(max_workers=njobs) as pool:
         for i in range(njobs):
-            args = (tree, nloci_per, nsites, nthreads, seeds.integers(0, 9e12), infer, 1_000)
+            args = (tree, nloci_per, nsites, nthreads, seeds.integers(0, 9e12), infer, max_sites_per_locus_in_concat)
             rasyncs[i] = pool.submit(one_batch_sim, *args)
     gdata = []
     sdata = []
