@@ -8,7 +8,6 @@ This script is meant to be called within a SLURM submission script.
 from typing import Dict, Any, Tuple, Iterator, Optional
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor
-import os
 import argparse
 import subprocess
 import toytree
@@ -94,10 +93,12 @@ def one_batch_sim(
     nthreads: int,
     seed: Optional[int],
     infer: bool,
+    trim_returned_sequences_to: Optional[int] = None,
 ) -> Tuple[pd.DataFrame, np.ndarray, pd.DataFrame]:
     """Return dataframes with true and (optionally) inferred gene trees.
 
     """
+    # build a Model and simulate the trees and sequences.
     model = ipcoal.Model(
         tree=tree,
         seed_trees=seed,
@@ -107,6 +108,7 @@ def one_batch_sim(
     )
     model.sim_loci(nloci, nsites)
 
+    # infer a raxml tree from the sequences, or don't.
     if (nsites == 1) or (not infer):
         raxdf = None
     else:
@@ -119,6 +121,12 @@ def one_batch_sim(
             do_not_autoscale_threads=True,
             perf_threads=True,
         )
+
+    # if returning the simulated sequences, they can be subset here.
+    if trim_returned_sequences_to is not None:
+        model.seqs = model.seqs[:, :, :trim_returned_sequences_to]
+
+    # return true trees, simulated sequences, and inferred raxml trees
     return model.df, model.seqs, raxdf
 
 
@@ -144,7 +152,7 @@ def batch_sims(
     seeds = np.random.default_rng(seed)
     with ProcessPoolExecutor(max_workers=njobs) as pool:
         for i in range(njobs):
-            args = (tree, nloci_per, nsites, nthreads, seeds.integers(0, 9e9), infer)
+            args = (tree, nloci_per, nsites, nthreads, seeds.integers(0, 9e12), infer, 1_000)
             rasyncs[i] = pool.submit(one_batch_sim, *args)
     gdata = []
     sdata = []
@@ -188,7 +196,9 @@ def sim_and_infer_one_rep(
     simdf, seqs, raxdf = batch_sims(species_tree, nloci, nsites, njobs, nthreads, infer=True)
 
     # infer a concatenation tree from the SAME sequences (hack applies the
-    # simulated sequences from last step onto a new Model object)
+    # simulated sequences from last step onto a new Model object). However,
+    # Some datasets are just way too big so the batch_sims step limits the
+    # max size of returned matrix to be ...
     model = ipcoal.Model(species_tree)
     model.seqs = seqs
     concat_tree = ipcoal.phylo.infer_raxml_ng_tree(
