@@ -111,12 +111,17 @@ if __name__ == "__main__":
     params = single_command_line_parser()
     rng = np.random.default_rng(params["seed"])
     seeds = rng.integers(1e12, size=params["nreps"])
+    outdir = Path(params["outdir"])
+    outdir.mkdir(exist_ok=True)
+
     for rep in range(params["nreps"]):
 
         # check if rep outfile exists
         jobname = Path(f"{params['tree']}-{params['parameter']}-{int(params['nsites'])}-rep{rep}")
-        if jobname.with_suffix(".out").exists():
-            print(f"skipping {jobname}; already done.")
+        jobpath = outdir / jobname
+
+        if jobpath.with_suffix(".out").exists():
+            print(f"skipping {jobname}; .out file exists.")
             continue
 
         kwargs = dict(
