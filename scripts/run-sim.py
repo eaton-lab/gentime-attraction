@@ -245,15 +245,20 @@ def sim_and_infer_one_rep(
         gtrees,
         tmpdir=tmpdir,
         name="sim",
+        nedges=1,
         starting_tree=species_tree.write(None, None, None),
         binary_path=julia_path,
         nproc=int(njobs * nthreads),
         nreps=int(njobs * nthreads),
     )
-    outfile = list(tmpdir.glob("analysis-snaq/sim-snaq-*.out"))[0]
-    with open(outfile, 'r') as netio:
-        gnet, other = netio.readline().strip().split(";")
-        gloglik = other.split()[-1]
+    net0 = list(tmpdir.glob("analysis-snaq/sim-*.snaq.net-0.out"))[0]
+    net1 = list(tmpdir.glob("analysis-snaq/sim-*.snaq.net-1.out"))[0]
+    with open(net0, 'r') as netio:
+        _, other = netio.readline().strip().split(";")
+        net0_loglik_sim = other.split()[-1]
+    with open(net1, 'r') as netio:
+        net1_sim, other = netio.readline().strip().split(";")
+        net1_loglik_sim = other.split()[-1]
     snaqdir = tmpdir / "analysis-snaq"
     for tmpfile in snaqdir.glob("*"):
         tmpfile.unlink()
@@ -264,15 +269,20 @@ def sim_and_infer_one_rep(
         raxtrees,
         tmpdir=tmpdir,
         name="rax",
+        nedges=1,
         starting_tree=species_tree.write(None, None, None),
         binary_path=julia_path,
         nproc=int(njobs * nthreads),
         nreps=int(njobs * nthreads),
     )
-    outfile = list(tmpdir.glob("analysis-snaq/rax-snaq-*.out"))[0]
-    with open(outfile, 'r') as netio:
-        rnet, other = netio.readline().strip().split(";")
-        rloglik = other.split()[-1]
+    net0 = list(tmpdir.glob("analysis-snaq/rax-*.snaq.net-0.out"))[0]
+    net1 = list(tmpdir.glob("analysis-snaq/rax-*.snaq.net-1.out"))[0]
+    with open(net0, 'r') as netio:
+        _, other = netio.readline().strip().split(";")
+        net0_loglik_rax = other.split()[-1]
+    with open(net1, 'r') as netio:
+        net1_rax, other = netio.readline().strip().split(";")
+        net1_loglik_rax = other.split()[-1]
     snaqdir = tmpdir / "analysis-snaq"
     for tmpfile in snaqdir.glob("*"):
         tmpfile.unlink()
@@ -293,10 +303,10 @@ def sim_and_infer_one_rep(
         true_dist_rf,
         atree_empirical.write(),
         emp_dist_rf,
-        gnet + ";",
-        gloglik,
-        rnet + ";",
-        rloglik,
+        net1_sim + ";",
+        float(net0_loglik_sim) - float(net1_loglik_sim),
+        net1_rax + ";",
+        float(net0_loglik_rax) - float(net1_loglik_rax),
     ]
     print("\t".join([str(i) for i in data]))
     for tmpfile in tmpdir.glob("*"):
