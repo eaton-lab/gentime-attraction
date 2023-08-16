@@ -138,7 +138,7 @@ def batch_sims(
     nthreads: int = 4,
     seed: int = None,
     infer: bool = True,
-    max_sites_per_locus_in_concat: int = 5_000,
+    max_sites_per_locus_in_concat: int = 10_000,
 ) -> Tuple[pd.DataFrame, np.ndarray, pd.DataFrame]:
     """Return a (genealogy, genetree) data frames.
 

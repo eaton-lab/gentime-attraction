@@ -11,8 +11,8 @@ SBATCH = """\
 #!/bin/bash
 #SBATCH --account=dsi
 #SBATCH --job-name={jobname}
-#SBATCH --output={jobname}.out
-#SBATCH --error={jobname}.err
+#SBATCH --output={outdir}/{jobname}.out
+#SBATCH --error={outdir}/{jobname}.err
 #SBATCH --time=11:59:00
 #SBATCH --ntasks=12
 #SBATCH --nodes=1
@@ -44,8 +44,10 @@ def write_and_submit_sbatch_script(
 ):
     """..
     """
+    outdir = Path(outdir)
+    outdir.mkdir(exist_ok=True)
     jobname = f"{tree}-{parameter}-{int(nsites)}-rep{rep}"
-    jobpath = Path(outdir) / jobname
+    jobpath = outdir / jobname
 
     # expand sbatch shell script with parameters
     sbatch = SBATCH.format(**dict(
@@ -56,7 +58,7 @@ def write_and_submit_sbatch_script(
         nloci=int(nloci),
         rep=rep,
         seed=seed,
-        outdir=outdir,
+        outdir=str(outdir),
         njobs=njobs,
         nthreads=nthreads,
     ))
