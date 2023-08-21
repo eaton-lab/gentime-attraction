@@ -30,6 +30,26 @@ NLOCI = 10
 NREPS = 4
 LOCUS_LENS = [1e6, 1e5, 1e4, 1e3]
 
+COLNAMES = [
+    "nloci",
+    "nsites",
+    "rep",
+    "concat_tree_raxml",
+    "prop_genealogies_concordant",
+    "prop_raxtrees_concordant",
+    "nsnps_per_locus",
+    "mean_unique_topologies_per_locus",
+    "n_unique_inferred_topologies",
+    "astral_tree_genealogies",
+    "dist_astral_tree_genealogies",
+    "astral_tree_raxtrees",
+    "dist_astral_tree_raxtrees",
+    "snaq_net1_genealogies",
+    "snaq_net1_genealogies_loglik_diff",
+    "snaq_net1_raxtrees",
+    "snaq_net1_raxtrees_loglik_diff",
+]
+
 
 def setup_tree(
     tree_type: str,
@@ -395,6 +415,7 @@ def test():
         tmpdir=outdir,
         njobs=4,
         nthreads=2,
+        julia_path="julia",
     )
 
 
@@ -407,8 +428,8 @@ def setup_output_dir(**kwargs) -> Path:
 
 if __name__ == "__main__":
 
-    print(test())
-    raise SystemExit(0)
+    # print(test())
+    # raise SystemExit(0)
     # print(test_sim_and_infer_gtrees())
     # raise SystemExit(0)
 
