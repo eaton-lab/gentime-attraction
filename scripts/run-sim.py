@@ -94,6 +94,7 @@ def one_batch_sim(
     seed: Optional[int],
     infer: bool,
     trim_returned_sequences_to: Optional[int] = None,
+    tmpdir: Path = None,
 ) -> Tuple[pd.DataFrame, np.ndarray, pd.DataFrame]:
     """Return dataframes with true and (optionally) inferred gene trees.
 
@@ -120,6 +121,7 @@ def one_batch_sim(
             nworkers=1,
             do_not_autoscale_threads=True,
             perf_threads=True,
+            tmpdir=tmpdir,
         )
 
     # if returning the simulated sequences, they can be subset here.
@@ -139,6 +141,7 @@ def batch_sims(
     seed: int = None,
     infer: bool = True,
     max_sites_per_locus_in_concat: int = 10_000,
+    tmpdir: Path = None,
 ) -> Tuple[pd.DataFrame, np.ndarray, pd.DataFrame]:
     """Return a (genealogy, genetree) data frames.
 
@@ -153,7 +156,16 @@ def batch_sims(
     seeds = np.random.default_rng(seed)
     with ProcessPoolExecutor(max_workers=njobs) as pool:
         for i in range(njobs):
-            args = (tree, nloci_per, nsites, nthreads, seeds.integers(0, 9e12), infer, max_sites_per_locus_in_concat)
+            args = (
+                tree,
+                nloci_per,
+                nsites,
+                nthreads,
+                seeds.integers(0, 9e12),
+                infer,
+                max_sites_per_locus_in_concat,
+                tmpdir,
+            )
             rasyncs[i] = pool.submit(one_batch_sim, *args)
     gdata = []
     sdata = []
@@ -194,7 +206,10 @@ def sim_and_infer_one_rep(
 
     """
     # batch simulate true genealogies & sequences, and infer gene trees
-    simdf, seqs, raxdf = batch_sims(species_tree, nloci, nsites, njobs, nthreads, infer=True)
+    simdf, seqs, raxdf = batch_sims(
+        species_tree, nloci, nsites, njobs, nthreads,
+        infer=True, tmpdir=tmpdir,
+    )
 
     # infer a concatenation tree from the SAME sequences (hack applies the
     # simulated sequences from last step onto a new Model object). However,
@@ -209,6 +224,7 @@ def sim_and_infer_one_rep(
         seed=seed,
         do_not_autoscale_threads=True,
         perf_threads=True,
+        tmpdir=tmpdir,
     )
 
     # get distribution of unlinked genealogies from simulation dataframe
@@ -391,7 +407,8 @@ def setup_output_dir(**kwargs) -> Path:
 
 if __name__ == "__main__":
 
-    # print(test())
+    print(test())
+    raise SystemExit(0)
     # print(test_sim_and_infer_gtrees())
     # raise SystemExit(0)
 
