@@ -42,6 +42,7 @@ def write_and_submit_sbatch_script(
     tmpdir: Path,
     njobs: int,
     nthreads: int,
+    dry_run: bool,
 ):
     """..
     """
@@ -71,10 +72,11 @@ def write_and_submit_sbatch_script(
         out.write(sbatch)
 
     # submit job to HPC SLURM job manager
-    cmd = ['sbatch', str(tmpfile)]
-    with Popen(cmd, stdout=PIPE, stderr=STDOUT) as proc:
-        out, _ = proc.communicate()
-    tmpfile.unlink()
+    if not dry_run:
+        cmd = ['sbatch', str(tmpfile)]
+        with Popen(cmd, stdout=PIPE, stderr=STDOUT) as proc:
+            out, _ = proc.communicate()
+        tmpfile.unlink()
 
     # remove err file if no errors
     errfile = jobpath.with_suffix(".err")
@@ -106,6 +108,8 @@ def single_command_line_parser():
         '--nthreads', type=int, default=4, help='N threads per job')
     parser.add_argument(
         '--seed', type=int, default=123, help="RNG seed. Used default as starting seed in manuscript.")
+    parser.add_argument(
+        '--dry-run', action="store_true", help="writes .sh files but does not execute.")
 
     return vars(parser.parse_args())
 
@@ -141,5 +145,6 @@ if __name__ == "__main__":
             tmpdir=params["tmpdir"],
             njobs=params["njobs"],
             nthreads=params["nthreads"],
+            dry_run=params["dry_run"],
         )
         write_and_submit_sbatch_script(**kwargs)
