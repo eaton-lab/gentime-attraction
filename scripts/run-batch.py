@@ -24,7 +24,7 @@ python run-sim.py \
     --nsites {nsites} \
     --nloci {nloci} \
     --seed {rep} \
-    --outdir {outdir} \
+    --tmpdir {tmpdir} \
     --rep {rep} \
     --njobs {njobs} \
     --nthreads {nthreads}
@@ -39,6 +39,7 @@ def write_and_submit_sbatch_script(
     nsites: int,
     nloci: int,
     outdir: Path,
+    tmpdir: Path,
     njobs: int,
     nthreads: int,
 ):
@@ -59,6 +60,7 @@ def write_and_submit_sbatch_script(
         rep=rep,
         seed=seed,
         outdir=str(outdir),
+        tmpdir=str(tmpdir),
         njobs=njobs,
         nthreads=nthreads,
     ))
@@ -97,6 +99,8 @@ def single_command_line_parser():
     parser.add_argument(
         '--outdir', type=Path, default=".", help='directory to write output files (e.g., scratch)')
     parser.add_argument(
+        '--tmpdir', type=Path, default="/tmp", help='directory to write tmp files (e.g., /tmp)')
+    parser.add_argument(
         '--njobs', type=int, default=1, help='N jobs to run concurrently')
     parser.add_argument(
         '--nthreads', type=int, default=4, help='N threads per job')
@@ -113,6 +117,8 @@ if __name__ == "__main__":
     seeds = rng.integers(1e12, size=params["nreps"])
     outdir = Path(params["outdir"])
     outdir.mkdir(exist_ok=True)
+    tmpdir = Path(params["tmpdir"])
+    tmpdir.mkdir(exist_ok=True)
 
     for rep in range(params["nreps"]):
 
@@ -132,6 +138,7 @@ if __name__ == "__main__":
             nsites=int(params["nsites"]),
             nloci=params["nloci"],
             outdir=params["outdir"],
+            tmpdir=params["tmpdir"],
             njobs=params["njobs"],
             nthreads=params["nthreads"],
         )

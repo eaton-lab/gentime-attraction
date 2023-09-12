@@ -225,6 +225,8 @@ def sim_and_infer_one_rep(
     """...
 
     """
+    # raise NotImplementedError("SAVE UNIQ TREE DISTRIBUTION TO SUPERSET FOR TOP 100")
+
     # batch simulate true genealogies & sequences, and infer gene trees
     simdf, seqs, raxdf = batch_sims(
         species_tree, nloci, nsites, njobs, nthreads,
@@ -374,7 +376,7 @@ def single_command_line_parser() -> Dict[str, Any]:
     parser.add_argument(
         '--seed', type=int, default=123, help='random seed.')
     parser.add_argument(
-        '--outdir', type=Path, default=".", help='directory to write output files (e.g., scratch)')
+        '--tmpdir', type=Path, default=".", help='directory to write output files (e.g., scratch)')
     parser.add_argument(
         '--njobs', type=int, default=1, help='N jobs to run concurrently')
     parser.add_argument(
@@ -404,15 +406,15 @@ def test_sim_and_infer_gtrees_and_astral():
 
 
 def test():
-    outdir = Path("/tmp/table-test")
-    outdir.mkdir(exist_ok=True)
+    tmpdir = Path("/tmp/table-test")
+    tmpdir.mkdir(exist_ok=True)
     sim_and_infer_one_rep(
         species_tree=setup_tree("imb", "Ne"),
         nloci=10,
         nsites=1e4,
         rep=0,
         seed=123,
-        tmpdir=outdir,
+        tmpdir=tmpdir,
         njobs=4,
         nthreads=2,
         julia_path="julia",
@@ -420,8 +422,9 @@ def test():
 
 
 def setup_output_dir(**kwargs) -> Path:
-    outdir = Path(kwargs["outdir"])
-    tmpdir = outdir / f"tmp-{kwargs['parameter']}-{int(kwargs['nsites'])}-{kwargs['rep']}"
+    """Create tmp-{params}/ named tmpdir within tmpdir and return path"""
+    argdir = Path(kwargs["tmpdir"])
+    tmpdir = argdir / f"tmp-{kwargs['parameter']}-{int(kwargs['nsites'])}-{kwargs['rep']}"
     tmpdir.mkdir(exist_ok=True)
     return tmpdir
 
