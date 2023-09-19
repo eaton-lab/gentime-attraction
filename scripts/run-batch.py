@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from pathlib import Path
+import time
 import argparse
 from subprocess import Popen, PIPE, STDOUT
 import numpy as np
@@ -148,4 +149,5 @@ if __name__ == "__main__":
             nthreads=params["nthreads"],
             dry_run=params["dry_run"],
         )
+        time.sleep(0.1)
         write_and_submit_sbatch_script(**kwargs)

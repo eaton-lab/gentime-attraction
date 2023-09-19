@@ -376,7 +376,7 @@ def single_command_line_parser() -> Dict[str, Any]:
     parser.add_argument(
         '--seed', type=int, default=123, help='random seed.')
     parser.add_argument(
-        '--tmpdir', type=Path, default=".", help='directory to write output files (e.g., scratch)')
+        '--tmpdir', type=Path, default="/tmp", help='directory to write tmp files (e.g., /tmp)')
     parser.add_argument(
         '--njobs', type=int, default=1, help='N jobs to run concurrently')
     parser.add_argument(
