@@ -18,7 +18,7 @@ import pandas as pd
 
 # get an ultrametric imbalanced tree
 # BAL_EDGES = [0, 1, 8, 10, 6, 7, 12, 13, 14]
-BAL_EDGES = [2, 3, 6, 7, 9, 12]  # 10, 13
+BAL_EDGES = [2, 3, 6, 7, 9, 10, 12, 13, 14]  # sets root Ne high as well
 IMB_EDGES = [3, 4, 10, 11]
 TREEHEIGHT = 1e6
 NE_DEFAULT = 5e5
@@ -409,7 +409,7 @@ def test():
     tmpdir = Path("/tmp/table-test")
     tmpdir.mkdir(exist_ok=True)
     sim_and_infer_one_rep(
-        species_tree=setup_tree("imb", "Ne"),
+        species_tree=setup_tree("bal", "Ne"),
         nloci=10,
         nsites=1e4,
         rep=0,
@@ -431,8 +431,8 @@ def setup_output_dir(**kwargs) -> Path:
 
 if __name__ == "__main__":
 
-    # print(test())
-    # raise SystemExit(0)
+    print(test())
+    raise SystemExit(0)
     # print(test_sim_and_infer_gtrees())
     # raise SystemExit(0)
 
