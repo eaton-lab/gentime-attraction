@@ -431,8 +431,8 @@ def setup_output_dir(**kwargs) -> Path:
 
 if __name__ == "__main__":
 
-    print(test())
-    raise SystemExit(0)
+    # print(test())
+    # raise SystemExit(0)
     # print(test_sim_and_infer_gtrees())
     # raise SystemExit(0)
 
