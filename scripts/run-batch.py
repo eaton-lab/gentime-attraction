@@ -133,6 +133,7 @@ if __name__ == "__main__":
         if jobpath.with_suffix(".out").exists():
             print(f"skipping {jobname}; .out file exists.")
             continue
+        print(f"submitting job {jobname}")
 
         kwargs = dict(
             rep=rep,
