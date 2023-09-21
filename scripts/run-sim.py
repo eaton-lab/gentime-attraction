@@ -289,8 +289,17 @@ def sim_and_infer_one_rep(
         nproc=int(njobs * nthreads),
         nreps=int(njobs * nthreads),
     )
-    net0 = list(tmpdir.glob("analysis-snaq/sim-*.snaq.net-0.out"))[0]
-    net1 = list(tmpdir.glob("analysis-snaq/sim-*.snaq.net-1.out"))[0]
+
+    # collect snaq output files.
+    # TEST: try here to catch why tmpfiles are disappearing...
+    try:
+        net0 = list(tmpdir.glob("analysis-snaq/sim-*.snaq.net-0.out"))[0]
+        net1 = list(tmpdir.glob("analysis-snaq/sim-*.snaq.net-1.out"))[0]
+    except IndexError:
+        tmplist = tmpdir.glob("**/*")
+        tmpfiles = [x for x in tmplist if x.is_file()]
+        raise IOError(f"why are my files missing?: \n{tmpfiles}")
+
     with open(net0, 'r') as netio:
         _, other = netio.readline().strip().split(";")
         net0_loglik_sim = other.split()[-1]
